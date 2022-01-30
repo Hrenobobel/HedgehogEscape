@@ -19,9 +19,9 @@ public class Player : MonoBehaviour
         CreateHedgehog(SecondPosition);
         Vector3 ThirdPosition = new Vector3(SecondPosition.x, SecondPosition.y, SecondPosition.z + Step);
         CreateHedgehog(ThirdPosition);
-        Vector3 ForthPosition = new Vector3(ThirdPosition.x, ThirdPosition.y, ThirdPosition.z + Step);
-        CreateHedgehog(ForthPosition);
-        Vector3 FifthPosition = new Vector3(ForthPosition.x + Step, ForthPosition.y, ForthPosition.z);
+        Vector3 FourthPosition = new Vector3(ThirdPosition.x, ThirdPosition.y, ThirdPosition.z + Step);
+        CreateHedgehog(FourthPosition);
+        Vector3 FifthPosition = new Vector3(FourthPosition.x + Step, FourthPosition.y, FourthPosition.z);
         CreateHedgehog(FifthPosition);
         CreateHedgehogs();
     }

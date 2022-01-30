@@ -7,8 +7,6 @@ public class Controls : MonoBehaviour
     public float MaxSwipe;
     //Логика группы ежей
     public Player player;
-    //Шаг сетки игрового поля
-    public float Step;
 
     //Отработка реакции на нажатие мыши
     private Vector3 _previousMousePosition;
