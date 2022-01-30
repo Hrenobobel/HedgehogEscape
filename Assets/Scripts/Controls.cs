@@ -2,78 +2,79 @@ using UnityEngine;
 
 public class Controls : MonoBehaviour
 {
-    //чувствительность управлени€ по каждой оси
-    public float SensivityX;
-    public float SensivityZ;
-    //защита от случайных касаний
+    //«ащита от случайных касаний
     public float MinSwipe;
     public float MaxSwipe;
-    //Transform дес€терых ежат
-    public GameObject Player;
+    //Ћогика группы ежей
+    public Player player;
     //Ўаг сетки игрового пол€
     public float Step;
 
-    public GameObject DownForwardElement;
-    public GameObject DownBackElement;
-    public GameObject DownRightElement;
-    public GameObject DownRLeftElement;
-
+    //ќтработка реакции на нажатие мыши
     private Vector3 _previousMousePosition;
 
-    void FixedUpdate()
+    void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             Vector3 delta = Input.mousePosition - _previousMousePosition;
             if ((delta.magnitude > MinSwipe) && (delta.magnitude < MaxSwipe))
             {
+                //ќбрабатываем движени€ мыши вдоль вертикальной оси
                 float Zdot = Vector3.Dot(delta.normalized, Vector3.up);
-                //обрабатываем движени€ только вдоль вертикальной оси
+
                 if (Zdot > 0.95)
                 {
-                    Player.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, Player.transform.position.z + Step);
-                    Player.transform.Rotate(90f, 0f, 0f);
+                    Vector3 up = player.GetUpCorner();
+                    //ѕоворот ежей относительно требуемой оси
+                    player.transform.RotateAround(up, Vector3.right, 90f);
                 }
                 if (Zdot < -0.95)
                 {
-                    Player.transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y, Player.transform.position.z - Step);
-                    Player.transform.Rotate(-90f, 0f, 0f);
+                    Vector3 down = player.GetDownCorner();
+                    //ѕоворот ежей относительно требуемой оси
+                    player.transform.RotateAround(down, Vector3.left, 90f);
                 }
 
+                //ќбрабатываем движени€ мыши вдоль горизонтальной оси
                 float Xdot = Vector3.Dot(delta.normalized, Vector3.right);
-                //обрабатываем движени€ только вдоль горизонтальной оси
+
                 if (Xdot > 0.95)
                 {
-                    Player.transform.position = new Vector3(Player.transform.position.x + Step, Player.transform.position.y, Player.transform.position.z);
-                    Player.transform.Rotate(0f, 0f, 90f);
+                    Vector3 right = player.GetRightCorner();
+                    //ѕоворот ежей относительно требуемой оси
+                    player.transform.RotateAround(right, Vector3.back, 90f);
                 }
                 if (Xdot < -0.95)
                 {
-                    Player.transform.position = new Vector3(Player.transform.position.x - Step, Player.transform.position.y, Player.transform.position.z);
-                    Player.transform.Rotate(0f, 0f, -90f);
+                    Vector3 left = player.GetLeftCorner();
+                    //ѕоворот ежей относительно требуемой оси
+                    player.transform.RotateAround(left, Vector3.forward, 90f);
                 }
             }
         }
-        if(Input.GetKeyUp(KeyCode.W))
+        //ќтработка реакции на нажатие мыши
+        _previousMousePosition = Input.mousePosition;
+
+        if (Input.GetKeyUp(KeyCode.W))
         {
-            Player.transform.RotateAround(DownForwardElement.transform.position, Vector3.right, 90f);
-            Debug.Log("W");
+            Vector3 up = player.GetUpCorner();
+            player.transform.RotateAround(up, Vector3.right, 90f);            
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
-            Player.transform.RotateAround(DownBackElement.transform.position, Vector3.left, 90f);
-            Debug.Log("S");
+            Vector3 down = player.GetDownCorner();
+            player.transform.RotateAround(down, Vector3.left, 90f);
         }
         if (Input.GetKeyUp(KeyCode.D))
         {
-            Player.transform.RotateAround(DownRightElement.transform.position, Vector3.back, 90f);
-            Debug.Log("D");
+            Vector3 right = player.GetRightCorner();
+            player.transform.RotateAround(right, Vector3.back, 90f);
         }
         if (Input.GetKeyUp(KeyCode.A))
         {
-            Player.transform.RotateAround(DownRLeftElement.transform.position, Vector3.forward, 90f);
-            Debug.Log("A");
+            Vector3 left = player.GetLeftCorner();
+            player.transform.RotateAround(left, Vector3.forward, 90f);
         }
-        _previousMousePosition = Input.mousePosition;
     }
 }
