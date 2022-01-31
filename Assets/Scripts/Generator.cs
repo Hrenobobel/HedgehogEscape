@@ -47,10 +47,12 @@ public class Generator : MonoBehaviour
         //Верхняя граница
         Vector3 First = new Vector3(0f + (player.Step / 2), Wall.transform.position.y, (LinesNumber - 3) * player.Step);
         Transform FirstWall = CreateWall(First);
+        FirstWall.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
         FirstWall.localScale = new Vector3((ColumnsNumber + 1) * player.Step, 2f, 1f);
         //Нижняя граница
         Vector3 Second = new Vector3(0f - (player.Step / 2), Wall.transform.position.y, -(LinesNumber - 3) * player.Step);
         Transform SecondWall = CreateWall(Second);
+        FirstWall.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
         SecondWall.localScale = new Vector3((ColumnsNumber + 1) * player.Step, 2f, 1f);
         //Левая граница
         Vector3 Third = new Vector3(-(ColumnsNumber - 3) * player.Step, Wall.transform.position.y, 0f + (player.Step / 2));
@@ -69,6 +71,7 @@ public class Generator : MonoBehaviour
         Transform ВrickWall = CreateWall(Вrick);
         ВrickWall.localScale = new Vector3(1f, 1f, 2f * player.Step);
     }
+    //Создание объекта стен
     private Transform CreateWall(Vector3 pos)
     {
         Transform brick = Instantiate(Wall.transform, pos, Quaternion.identity, transform);

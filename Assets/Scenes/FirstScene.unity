@@ -551,7 +551,7 @@ MonoBehaviour:
   LinesNumber: 7
   ColumnsNumber: 7
   Hole: {fileID: 5777026313439055264, guid: aca4cecb52bc55f44ba1be192c11f07b, type: 3}
-  Wall: {fileID: 9004241283075844732, guid: 034989ed24864a24488c1bf3c44c3ecd, type: 3}
+  Wall: {fileID: 4683945906283538644, guid: b2012c659b71a06408efa60f22161808, type: 3}
 --- !u!4 &808210834
 Transform:
   m_ObjectHideFlags: 0
