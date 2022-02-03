@@ -156,6 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Step: 1
   Hedgehog: {fileID: 8591903399863579136, guid: dd24113c010eefa49b26ec91c592b865, type: 3}
+  LastMove: 
 --- !u!4 &75695405
 Transform:
   m_ObjectHideFlags: 0
