@@ -22,57 +22,59 @@ public class Controls : MonoBehaviour
                 float Zdot = Vector3.Dot(delta.normalized, Vector3.up);
 
                 if (Zdot > 0.95)
-                {
-                    Vector3 up = player.GetUpCorner();
-                    //Поворот ежей относительно требуемой оси
-                    player.transform.RotateAround(up, Vector3.right, 90f);
-                }
+                    МoveUp();
+
                 if (Zdot < -0.95)
-                {
-                    Vector3 down = player.GetDownCorner();
-                    //Поворот ежей относительно требуемой оси
-                    player.transform.RotateAround(down, Vector3.left, 90f);
-                }
+                    МoveDown();
 
                 //Обрабатываем движения мыши вдоль горизонтальной оси
                 float Xdot = Vector3.Dot(delta.normalized, Vector3.right);
 
                 if (Xdot > 0.95)
-                {
-                    Vector3 right = player.GetRightCorner();
-                    //Поворот ежей относительно требуемой оси
-                    player.transform.RotateAround(right, Vector3.back, 90f);
-                }
+                    МoveRight();
+
                 if (Xdot < -0.95)
-                {
-                    Vector3 left = player.GetLeftCorner();
-                    //Поворот ежей относительно требуемой оси
-                    player.transform.RotateAround(left, Vector3.forward, 90f);
-                }
+                    МoveLeft();
             }
         }
         //Отработка реакции на нажатие мыши
         _previousMousePosition = Input.mousePosition;
 
+        //Управление с клавиатуры
         if (Input.GetKeyUp(KeyCode.W))
-        {
-            Vector3 up = player.GetUpCorner();
-            player.transform.RotateAround(up, Vector3.right, 90f);            
-        }
+            МoveUp();
+
         if (Input.GetKeyUp(KeyCode.S))
-        {
-            Vector3 down = player.GetDownCorner();
-            player.transform.RotateAround(down, Vector3.left, 90f);
-        }
+            МoveDown();
+
         if (Input.GetKeyUp(KeyCode.D))
-        {
-            Vector3 right = player.GetRightCorner();
-            player.transform.RotateAround(right, Vector3.back, 90f);
-        }
+            МoveRight();
+
         if (Input.GetKeyUp(KeyCode.A))
-        {
-            Vector3 left = player.GetLeftCorner();
-            player.transform.RotateAround(left, Vector3.forward, 90f);
-        }
+            МoveLeft();
+    }
+    public void МoveUp ()
+    {
+        Vector3 up = player.GetUpCorner();
+        //Поворот ежей относительно требуемой оси
+        player.transform.RotateAround(up, Vector3.right, 90f);
+    }
+    public void МoveDown()
+    {
+        Vector3 down = player.GetDownCorner();
+        //Поворот ежей относительно требуемой оси
+        player.transform.RotateAround(down, Vector3.left, 90f);
+    }
+    public void МoveRight()
+    {
+        Vector3 right = player.GetRightCorner();
+        //Поворот ежей относительно требуемой оси
+        player.transform.RotateAround(right, Vector3.back, 90f);
+    }
+    public void МoveLeft()
+    {
+        Vector3 left = player.GetLeftCorner();
+        //Поворот ежей относительно требуемой оси
+        player.transform.RotateAround(left, Vector3.forward, 90f);
     }
 }

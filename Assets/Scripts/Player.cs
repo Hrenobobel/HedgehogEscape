@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     //Объект ежа
     public GameObject Hedgehog;
 
+    public string LastMove;
+
     //Список из ежиков
     private List<Transform> Hedgehogs = new List<Transform>();
 
@@ -55,6 +57,7 @@ public class Player : MonoBehaviour
             if ((leftPos.x - Hedgehogs[i].position.x) > - 0.1f)         //Проверка условия (Hedgehogs[i].position.x <= leftPos.x)
                 if ((leftPos.y - Hedgehogs[i].position.y) > - 0.1f)     //Проверка условия (Hedgehogs[i].position.y <= leftPos.y)
                     leftPos = Hedgehogs[i].position;
+        LastMove = "Left";
         return leftPos;
     }
     //Правый край для привязки оси поворота
@@ -65,6 +68,7 @@ public class Player : MonoBehaviour
             if ((rightPos.x - Hedgehogs[i].position.x) < 0.1f)          //Проверка условия (Hedgehogs[i].position.x >= rightPos.x)
                 if ((rightPos.y - Hedgehogs[i].position.y) > - 0.1f)    //Проверка условия (Hedgehogs[i].position.y <= rightPos.y)
                     rightPos = Hedgehogs[i].position;
+        LastMove = "Right";
         return rightPos;
     }
     //Верхний край для привязки оси поворота
@@ -75,6 +79,7 @@ public class Player : MonoBehaviour
             if ((upPos.z - Hedgehogs[i].position.z) < 0.1f)             //Проверка условия (Hedgehogs[i].position.z >= upPos.z)
                 if ((upPos.y - Hedgehogs[i].position.y) > - 0.1f)       //Проверка условия (Hedgehogs[i].position.y <= upPos.y)
                     upPos = Hedgehogs[i].position;
+        LastMove = "Up";
         return upPos;
     }
     //Нижний край для привязки оси поворота
@@ -85,6 +90,7 @@ public class Player : MonoBehaviour
             if ((downPos.z - Hedgehogs[i].position.z) > -0.1f)         //Проверка условия (Hedgehogs[i].position.z <= downPos.z)
                 if ((downPos.y - Hedgehogs[i].position.y) > -0.1f)       //Проверка условия (Hedgehogs[i].position.y <= downPos.y)
                     downPos = Hedgehogs[i].position;
+        LastMove = "Down";
         return downPos;
     }
 
