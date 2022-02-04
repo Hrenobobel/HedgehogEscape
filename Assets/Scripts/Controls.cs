@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Controls : MonoBehaviour
@@ -14,6 +15,9 @@ public class Controls : MonoBehaviour
 
     //Отработка реакции на нажатие мыши
     private Vector3 _previousMousePosition;
+
+    Coroutine coroutine;
+    private Transform end;
 
     void Update()
     {
@@ -46,7 +50,11 @@ public class Controls : MonoBehaviour
 
         //Управление с клавиатуры
         if (Input.GetKeyUp(KeyCode.W))
-            МoveUp();
+            if (coroutine == null)
+            {
+                coroutine = StartCoroutine(Rotate(90.0f, 0.5f));
+            }
+        //МoveUp();
 
         if (Input.GetKeyUp(KeyCode.S))
             МoveDown();
@@ -62,6 +70,7 @@ public class Controls : MonoBehaviour
         SavePlayerPosition();
         Vector3 up = player.GetUpCorner();
         //Поворот ежей относительно требуемой оси
+        
         player.transform.RotateAround(up, Vector3.right, 90f);
     }
     public void МoveDown()  //Объект игрока двигается назад по оси Z
@@ -100,6 +109,27 @@ public class Controls : MonoBehaviour
         if (other.gameObject.CompareTag("Wall"))    //На объекте стены установлен возвращающий игрока на предыдущую позицию триггер
         {
             SetPlayerPosition();
+        }
+    }
+
+    IEnumerator Rotate(float angle, float intensity)
+    {
+        end = player.transform;
+        Vector3 up = player.GetUpCorner();
+        end.RotateAround(up, Vector3.right, angle);
+
+        while (true)
+        {
+            player.transform.rotation = Quaternion.Lerp(player.transform.rotation, end.rotation, intensity * Time.deltaTime);
+
+            if (Quaternion.Angle(player.transform.rotation, end.rotation) < 0.01f)
+            {
+                coroutine = null;
+                player.transform.rotation = end.rotation;
+                yield break;
+            }
+
+            yield return null;
         }
     }
 }
