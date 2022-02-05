@@ -19,10 +19,11 @@ public class Controls : MonoBehaviour
     //Указатель на столкновение со стеной
     private bool WallTrigger;
     //Корутины плавного поворота
-    Coroutine coroutine;
+    public Coroutine coroutine;
 
     void Update()
     {
+        //Отработка реакции на нажатие мыши
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 delta = Input.mousePosition - _previousMousePosition;
@@ -32,31 +33,34 @@ public class Controls : MonoBehaviour
                 float Zdot = Vector3.Dot(delta.normalized, Vector3.up);
 
                 if (Zdot > 0.95)
-                    МoveUp();
+                    if (coroutine == null)      //Выполняем движение если другого не производится
+                        coroutine = StartCoroutine(RotateUp());
 
                 if (Zdot < -0.95)
-                    МoveDown();
+                    if (coroutine == null)      //Выполняем движение если другого не производится
+                        coroutine = StartCoroutine(RotateDown());
 
                 //Обрабатываем движения мыши вдоль горизонтальной оси
                 float Xdot = Vector3.Dot(delta.normalized, Vector3.right);
 
                 if (Xdot > 0.95)
-                    МoveRight();
+                    if (coroutine == null)      //Выполняем движение если другого не производится
+                        coroutine = StartCoroutine(RotateRight());
 
                 if (Xdot < -0.95)
-                    МoveLeft();
+                    if (coroutine == null)      //Выполняем движение если другого не производится
+                        coroutine = StartCoroutine(RotateLeft());
             }
         }
-        //Отработка реакции на нажатие мыши
         _previousMousePosition = Input.mousePosition;
 
         //Управление с клавиатуры
         if (Input.GetKeyUp(KeyCode.W))
-            if (coroutine == null)      //Выполняем движение если другого не производится
-                coroutine = StartCoroutine(RotateUp());                
+            if ((coroutine == null) && player.Finish)   //Выполняем движение если другого не производится
+                coroutine = StartCoroutine(RotateUp());
 
         if (Input.GetKeyUp(KeyCode.S))
-            if (coroutine == null)      //Выполняем движение если другого не производится
+            if ((coroutine == null) && player.Finish)   //Выполняем движение если другого не производится
                 coroutine = StartCoroutine(RotateDown());
 
         if (Input.GetKeyUp(KeyCode.D))
@@ -83,6 +87,7 @@ public class Controls : MonoBehaviour
         if (other.gameObject.CompareTag("Wall"))    
         {
             WallTrigger = true;     //Выход из функции плавного поворота
+            Debug.Log("Wall");
             SetPlayerPosition();    //Возвращем игрока в предыдущее положение
         }
     }
@@ -152,7 +157,7 @@ public class Controls : MonoBehaviour
             yield return null;
         }
     }
-    IEnumerator RotateRight()   //Реализация плавного поворота игрока вправо
+    public IEnumerator RotateRight()   //Реализация плавного поворота игрока вправо
     {
         SavePlayerPosition();                       //Сохраняем стартовое положение игрока
         Vector3 right = player.GetRightCorner();    //Берем правую нижнюю ось группы ежей для поворота

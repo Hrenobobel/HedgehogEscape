@@ -27,65 +27,58 @@ public class Generator : MonoBehaviour
 
     private void Awake()
     {
-        offsetX = (LinesNumber - 1) / 2;    //смещение координат для нечетного количества строк
-        offsetZ = (ColumnsNumber - 1) / 2;  //смещение координат для нечетного количества столбцов
+        offsetX = (LinesNumber - 1) / 2;    //смещение координат (для нечетного количества строк)
+        offsetZ = (ColumnsNumber - 1) / 2;  //смещение координат (для нечетного количества столбцов)
         Ypos = Wall.transform.position.y;
         step = player.Step;
 
-        //Создание группы из ежей
-        player.AddHedgehogs(StartTransform);
-        //Вращение группы ежей относительно оси, проходящей через "голову"
-        player.RotateHedgehogs(StartTransform, StartRotation);
-        //Генерация ячеек игрового поля
-        CreateHoles();
-        //Генерация стен
-        CreateWalls();
-    }
-    //Создаём поле из ячеек
-    private void CreateHoles()
+        player.AddHedgehogs(StartTransform);                    //Создание группы из ежей
+        player.RotateHedgehogs(StartTransform, StartRotation);  //Вращение группы ежей относительно оси, проходящей через "голову"
+        CreateHoles();                                          //Генерация ячеек игрового поля
+        CreateWalls();                                          //Генерация стен
+
+        player.Finish = true;
+    }    
+    private void CreateHoles()                      //Создаём поле из префабов ячеек
     {
         for (int i = 0; i < LinesNumber; i++)
             for (int n = 0; n < ColumnsNumber; n++)
                 CreateHole(i, n);
-    }
-    //Генерация ячейки
-    private void CreateHole(int line, int column)
+    }    
+    private void CreateHole(int line, int column)   //Генерация ячейки
     {
         Vector3 position = new Vector3((line - offsetX) * step, Ypos, (column - offsetZ) * step);
         Instantiate(Hole.transform, position, Quaternion.identity, transform);
-    }
-    //Генератор стен
-    private void CreateWalls()
-    {
-        //Верхняя граница
-        Vector3 First = new Vector3(-(offsetX + 1) * step, Ypos, (offsetZ + 1) * step);
+    }    
+    private void CreateWalls()                      //Генератор стен
+    {        
+        Vector3 First = new Vector3(-(offsetX + 1) * step, Ypos, (offsetZ + 1) * step);         //Верхняя граница
         Transform FirstWall = CreateWall(First);
         FirstWall.localScale = new Vector3(1f, 2f, (ColumnsNumber + 1) * step);
         FirstWall.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
-        //Нижняя граница
-        Vector3 Second = new Vector3(-(offsetX + 1) * step, Ypos, -(offsetZ + 1) * step);
+        
+        Vector3 Second = new Vector3(-(offsetX + 1) * step, Ypos, -(offsetZ + 1) * step);       //Нижняя граница
         Transform SecondWall = CreateWall(Second);
         SecondWall.localScale = new Vector3(1f, 2f, (ColumnsNumber + 1) * step);
         SecondWall.Rotate(0.0f, 90.0f, 0.0f, Space.Self);
-        //Левая граница
-        Vector3 Third = new Vector3(-(offsetX + 1) * step, Ypos, -(offsetZ + 1) * step);
+        
+        Vector3 Third = new Vector3(-(offsetX + 1) * step, Ypos, -(offsetZ + 1) * step);        //Левая граница
         Transform ThirdWall = CreateWall(Third);
         ThirdWall.localScale = new Vector3(1f, 2f, (LinesNumber + 1) * step);
-        //Правая верхняя граница
-        Vector3 Fourth = new Vector3((offsetX + 1) * step, Ypos, step / 2);
+        
+        Vector3 Fourth = new Vector3((offsetX + 1) * step, Ypos, step / 2 + 0.025f);             //Правая верхняя граница
         Transform FourthWall = CreateWall(Fourth);
-        FourthWall.localScale = new Vector3(1f, 2f, 3.5f * step);
-        //Правая нижняя граница
-        Vector3 Fifth = new Vector3((offsetX + 1) * step, Ypos, -(offsetZ + 1) * step);
+        FourthWall.localScale = new Vector3(1f, 2f, 3.475f * step);
+        
+        Vector3 Fifth = new Vector3((offsetX + 1) * step, Ypos, -(offsetZ + 1) * step); //Правая нижняя граница
         Transform FifthWall = CreateWall(Fifth);
-        FifthWall.localScale = new Vector3(1f, 2f, 2.5f * step);
-        //Барьер
-        Vector3 Вrick = new Vector3((offsetX + 1) * step, Ypos / 2, - 1.5f * step);
+        FifthWall.localScale = new Vector3(1f, 2f, 2.475f * step);
+        
+        Vector3 Вrick = new Vector3((offsetX + 1) * step, Ypos / 2, - 1.5f * step - 0.025f);             //Барьер
         Transform ВrickWall = CreateWall(Вrick);
-        ВrickWall.localScale = new Vector3(1f, 1f, 2f * step);
+        ВrickWall.localScale = new Vector3(1f, 0.95f, 2.05f * step);
     }
-    //Создание объекта стен
-    private Transform CreateWall(Vector3 pos)
+    private Transform CreateWall(Vector3 pos)       //Создание объекта стен
     {
         Transform brick = Instantiate(Wall.transform, pos, Quaternion.identity, transform);
         return brick;
