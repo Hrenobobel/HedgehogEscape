@@ -10,6 +10,8 @@ public class Controls : MonoBehaviour
     public Player player;
     //Скорость поворота
     public float MoveSpeed;
+    //Управление включено
+    public bool EnableControls;
 
     //Предыдущая позиция игрока
     private Vector3 LastPosition;
@@ -17,78 +19,87 @@ public class Controls : MonoBehaviour
     //Отработка реакции на нажатие мыши
     private Vector3 _previousMousePosition;
     //Указатель на столкновение со стеной
-    private bool WallTrigger;
+    private bool WallEnemyTrigger;
     //Корутины плавного поворота
     public Coroutine coroutine;
 
     void Update()
     {
-        //Отработка реакции на нажатие мыши
-        if (Input.GetMouseButtonDown(0))
+        if (player.EnableControls)      //Если управление включено
         {
-            Vector3 delta = Input.mousePosition - _previousMousePosition;
-            if ((delta.magnitude > MinSwipe) && (delta.magnitude < MaxSwipe))
+            //Отработка реакции на нажатие мыши
+            if (Input.GetMouseButtonDown(0))
             {
-                //Обрабатываем движения мыши вдоль вертикальной оси
-                float Zdot = Vector3.Dot(delta.normalized, Vector3.up);
+                Vector3 delta = Input.mousePosition - _previousMousePosition;
+                if ((delta.magnitude > MinSwipe) && (delta.magnitude < MaxSwipe))
+                {
+                    //Обрабатываем движения мыши вдоль вертикальной оси
+                    float Zdot = Vector3.Dot(delta.normalized, Vector3.up);
 
-                if (Zdot > 0.95)
-                    if (coroutine == null)      //Выполняем движение если другого не производится
-                        coroutine = StartCoroutine(RotateUp());
+                    if (Zdot > 0.95)
+                        if (coroutine == null)  //Выполняем движение если другого не производится
+                            coroutine = StartCoroutine(RotateUp());
 
-                if (Zdot < -0.95)
-                    if (coroutine == null)      //Выполняем движение если другого не производится
-                        coroutine = StartCoroutine(RotateDown());
+                    if (Zdot < -0.95)
+                        if (coroutine == null)  //Выполняем движение если другого не производится
+                            coroutine = StartCoroutine(RotateDown());
 
-                //Обрабатываем движения мыши вдоль горизонтальной оси
-                float Xdot = Vector3.Dot(delta.normalized, Vector3.right);
+                    //Обрабатываем движения мыши вдоль горизонтальной оси
+                    float Xdot = Vector3.Dot(delta.normalized, Vector3.right);
 
-                if (Xdot > 0.95)
-                    if (coroutine == null)      //Выполняем движение если другого не производится
-                        coroutine = StartCoroutine(RotateRight());
+                    if (Xdot > 0.95)
+                        if (coroutine == null)  //Выполняем движение если другого не производится
+                            coroutine = StartCoroutine(RotateRight());
 
-                if (Xdot < -0.95)
-                    if (coroutine == null)      //Выполняем движение если другого не производится
-                        coroutine = StartCoroutine(RotateLeft());
+                    if (Xdot < -0.95)
+                        if (coroutine == null)  //Выполняем движение если другого не производится
+                            coroutine = StartCoroutine(RotateLeft());
+                }
             }
-        }
-        _previousMousePosition = Input.mousePosition;
+            _previousMousePosition = Input.mousePosition;
 
-        //Управление с клавиатуры
-        if (Input.GetKeyUp(KeyCode.W))
-            if ((coroutine == null) && player.Finish)   //Выполняем движение если другого не производится
-                coroutine = StartCoroutine(RotateUp());
+            //Управление с клавиатуры
+            if (Input.GetKeyUp(KeyCode.W))
+                if (coroutine == null)  //Выполняем движение если другого не производится
+                    coroutine = StartCoroutine(RotateUp());
 
-        if (Input.GetKeyUp(KeyCode.S))
-            if ((coroutine == null) && player.Finish)   //Выполняем движение если другого не производится
-                coroutine = StartCoroutine(RotateDown());
+            if (Input.GetKeyUp(KeyCode.S))
+                if (coroutine == null)  //Выполняем движение если другого не производится
+                    coroutine = StartCoroutine(RotateDown());
 
-        if (Input.GetKeyUp(KeyCode.D))
-            if (coroutine == null)      //Выполняем движение если другого не производится
-                coroutine = StartCoroutine(RotateRight());
+            if (Input.GetKeyUp(KeyCode.D))
+                if (coroutine == null)  //Выполняем движение если другого не производится
+                    coroutine = StartCoroutine(RotateRight());
 
-        if (Input.GetKeyUp(KeyCode.A))
-            if (coroutine == null)      //Выполняем движение если другого не производится
-                coroutine = StartCoroutine(RotateLeft());
+            if (Input.GetKeyUp(KeyCode.A))
+                if (coroutine == null)  //Выполняем движение если другого не производится
+                    coroutine = StartCoroutine(RotateLeft());
+        }       
     }
     private void SavePlayerPosition()   //Сохранение текущей позиции объекта игрока
     {
         LastPosition = player.transform.position;
         LastRotation = player.transform.rotation;
-        WallTrigger = false;            //Сбрасываем указатель столкновения со стеной
+        WallEnemyTrigger = false;            //Сбрасываем указатель столкновения со стеной
     }
     private void SetPlayerPosition()    //Установка объекта игрока в передыдущую позицию
     {
         player.transform.position = LastPosition;
         player.transform.rotation = LastRotation;
     }
-    private void OnTriggerEnter(Collider other)     //при касании стены срабатывает возвращающий игрока на предыдущую позицию триггер
+    private void OnTriggerEnter(Collider other)     
     {
-        if (other.gameObject.CompareTag("Wall"))    
+        if (other.gameObject.CompareTag("Wall"))    //при касании стены срабатывает возвращающий игрока на предыдущую позицию триггер
         {
-            WallTrigger = true;     //Выход из функции плавного поворота
+            WallEnemyTrigger = true;         //Выход из функции плавного поворота
             Debug.Log("Wall");
-            SetPlayerPosition();    //Возвращем игрока в предыдущее положение
+            SetPlayerPosition();        //Возвращем игрока в предыдущее положение
+        }
+        if (other.gameObject.CompareTag("Enemy"))   //при касании врага срабатывает возвращающий игрока на предыдущую позицию триггер
+        {
+            WallEnemyTrigger = true;         //Выход из функции плавного поворота
+            Debug.Log("Enemy");
+            SetPlayerPosition();        //Возвращем игрока в предыдущее положение
         }
     }
     public void МoveUp ()   //Позиция игрока поворачивается на 90 градусов вперёд по оси Z
@@ -118,19 +129,23 @@ public class Controls : MonoBehaviour
         float rotation = 0f;                //Счетчик для контроля "доворота до 90 градусов"        
         while (true) 
         {
-            if (WallTrigger) yield break;   //Если столкнулись со стеной, выходим
-
+            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            {
+                StopCoroutine();
+                yield break;
+            }
+            //Вычисляем угол поворота
             float angle = Mathf.LerpAngle(0f, 90f, MoveSpeed * Time.deltaTime);
             player.transform.RotateAround(up, Vector3.right, angle);
             rotation += angle;
-            
+
             if (rotation > 90f - MoveSpeed) //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
-            {                
+            {
                 SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
                 МoveUp();                   // и проворачиваем точно на 90 градусов
+                StopCoroutine();
                 yield break;
             }
-            coroutine = null;
             yield return null;
         }
     }
@@ -141,19 +156,23 @@ public class Controls : MonoBehaviour
         float rotation = 0f;                    //Счетчик для контроля "доворота до 90 градусов"        
         while (true)
         {
-            if (WallTrigger) yield break;   //Если столкнулись со стеной, выходим
+            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            {
+                StopCoroutine();
+                yield break;
+            }
 
             float angle = Mathf.LerpAngle(0f, 90f, MoveSpeed * Time.deltaTime);
             player.transform.RotateAround(down, Vector3.left, angle);
             rotation += angle;
-
+            //Вычисляем угол поворота
             if (rotation > 90f - MoveSpeed) //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
             {
                 SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
                 МoveDown();                 // и проворачиваем точно на 90 градусов
+                StopCoroutine();
                 yield break;
             }
-            coroutine = null;
             yield return null;
         }
     }
@@ -164,19 +183,23 @@ public class Controls : MonoBehaviour
         float rotation = 0f;                        //Счетчик для контроля "доворота до 90 градусов"        
         while (true)
         {
-            if (WallTrigger) yield break;   //Если столкнулись со стеной, выходим
-
+            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            {
+                StopCoroutine();
+                yield break;
+            }
+            //Вычисляем угол поворота
             float angle = Mathf.LerpAngle(0f, 90f, MoveSpeed * Time.deltaTime);
             player.transform.RotateAround(right, Vector3.back, angle);
             rotation += angle;
 
             if (rotation > 90f - MoveSpeed) //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
-            {                
+            {
                 SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
                 МoveRight();                // и проворачиваем точно на 90 градусов
+                StopCoroutine();
                 yield break;
             }
-            coroutine = null;
             yield return null;
         }
     }
@@ -187,8 +210,12 @@ public class Controls : MonoBehaviour
         float rotation = 0f;                    //Счетчик для контроля "доворота до 90 градусов"        
         while (true)
         {
-            if (WallTrigger) yield break;   //Если столкнулись со стеной, выходим
-
+            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            {
+                StopCoroutine();
+                yield break;   
+            }
+            //Вычисляем угол поворота
             float angle = Mathf.LerpAngle(0f, 90f, MoveSpeed * Time.deltaTime);
             player.transform.RotateAround(left, Vector3.forward, angle);
             rotation += angle;
@@ -197,10 +224,14 @@ public class Controls : MonoBehaviour
             {                
                 SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
                 МoveLeft();                 // и проворачиваем точно на 90 градусов
+                StopCoroutine();
                 yield break;
             }
-            coroutine = null;
             yield return null;
         }
+    }
+    private void StopCoroutine()
+    {
+        coroutine = null;
     }
 }

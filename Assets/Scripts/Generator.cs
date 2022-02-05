@@ -16,10 +16,12 @@ public class Generator : MonoBehaviour
     public GameObject Hole;
     //Объект стены
     public GameObject Wall;
+    //Префаб врага
+    public GameObject Enemy;
 
     //смещение координат
-    private float offsetX;
-    private float offsetZ;
+    private int offsetX;
+    private int offsetZ;
     //позиция Y у объекта стены
     private float Ypos;
     //Шаг сетки игрового поля
@@ -36,19 +38,24 @@ public class Generator : MonoBehaviour
         player.RotateHedgehogs(StartTransform, StartRotation);  //Вращение группы ежей относительно оси, проходящей через "голову"
         CreateHoles();                                          //Генерация ячеек игрового поля
         CreateWalls();                                          //Генерация стен
+        CreateEnemies();                                        //Генерация врагов
 
-        player.Finish = true;
+        player.EnableControls = true;       //Управление включено
     }    
-    private void CreateHoles()                      //Создаём поле из префабов ячеек
+    private void CreateHoles()                      //Создаём поле из префабов ячеек и площадку на выходе
     {
         for (int i = 0; i < LinesNumber; i++)
             for (int n = 0; n < ColumnsNumber; n++)
-                CreateHole(i, n);
+                CreateObject(Hole, i, n);
+        CreateObject(Hole, LinesNumber + 1, offsetZ);
+        CreateObject(Hole, LinesNumber + 2, offsetZ);
+        CreateObject(Hole, LinesNumber + 1, offsetZ - 1);
+        CreateObject(Hole, LinesNumber + 2, offsetZ - 1);
     }    
-    private void CreateHole(int line, int column)   //Генерация ячейки
+    private void CreateObject(GameObject Object, int line, int column)   //Генерация ячейки
     {
         Vector3 position = new Vector3((line - offsetX) * step, Ypos, (column - offsetZ) * step);
-        Instantiate(Hole.transform, position, Quaternion.identity, transform);
+        Instantiate(Object.transform, position, Quaternion.identity, transform);
     }    
     private void CreateWalls()                      //Генератор стен
     {        
@@ -70,11 +77,11 @@ public class Generator : MonoBehaviour
         Transform FourthWall = CreateWall(Fourth);
         FourthWall.localScale = new Vector3(1f, 2f, 3.475f * step);
         
-        Vector3 Fifth = new Vector3((offsetX + 1) * step, Ypos, -(offsetZ + 1) * step); //Правая нижняя граница
+        Vector3 Fifth = new Vector3((offsetX + 1) * step, Ypos, -(offsetZ + 1) * step);         //Правая нижняя граница
         Transform FifthWall = CreateWall(Fifth);
         FifthWall.localScale = new Vector3(1f, 2f, 2.475f * step);
         
-        Vector3 Вrick = new Vector3((offsetX + 1) * step, Ypos / 2, - 1.5f * step - 0.025f);             //Барьер
+        Vector3 Вrick = new Vector3((offsetX + 1) * step, Ypos / 2, - 1.5f * step - 0.025f);    //Барьер
         Transform ВrickWall = CreateWall(Вrick);
         ВrickWall.localScale = new Vector3(1f, 0.95f, 2.05f * step);
     }
@@ -82,5 +89,12 @@ public class Generator : MonoBehaviour
     {
         Transform brick = Instantiate(Wall.transform, pos, Quaternion.identity, transform);
         return brick;
+    }
+    private void CreateEnemies()
+    {
+        CreateObject(Enemy, 1, 2);
+        CreateObject(Enemy, 4, 2);
+        CreateObject(Enemy, 2, 4);
+        CreateObject(Enemy, 4, 5);
     }
 }

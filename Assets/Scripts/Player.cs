@@ -7,8 +7,8 @@ public class Player : MonoBehaviour
     public float Step;
     //Объект ежа
     public GameObject Hedgehog;
-
-    public bool Finish;
+    //Управление включено
+    public bool EnableControls;
 
     //Список из ежиков
     private List<Transform> Hedgehogs = new List<Transform>();
