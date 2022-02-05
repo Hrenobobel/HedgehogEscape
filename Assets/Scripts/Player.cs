@@ -7,14 +7,13 @@ public class Player : MonoBehaviour
     public float Step;
     //Объект ежа
     public GameObject Hedgehog;
-
-    public string LastMove;
+    //Управление включено
+    public bool EnableControls;
 
     //Список из ежиков
     private List<Transform> Hedgehogs = new List<Transform>();
 
-    //Создание "П"-образной фигуры из ежей
-    public void AddHedgehogs(Transform FirstTransform)
+    public void AddHedgehogs(Transform FirstTransform)  //Создание "П"-образной фигуры из ежей
     {
         CreateHedgehog(FirstTransform.position);
         Vector3 SecondPosition = new Vector3(FirstTransform.position.x - Step, FirstTransform.position.y, FirstTransform.position.z);
@@ -27,20 +26,17 @@ public class Player : MonoBehaviour
         CreateHedgehog(FifthPosition);
         CreateHedgehogs();
     }
-    //Поворот группы ежей относительно вертикальной оси
-    public void RotateHedgehogs(Transform AxisPosition, float Rotation)
+    public void RotateHedgehogs(Transform AxisPosition, float Rotation) //Поворот группы ежей относительно вертикальной оси
     {
         for (int i = 0; i < Hedgehogs.Count; i++)
             Hedgehogs[i].RotateAround(AxisPosition.position, Vector3.up, Rotation);
     }
-    //Создание одного ежа
-    private void CreateHedgehog(Vector3 position)
+    private void CreateHedgehog(Vector3 position)   //Создание одного ежа
     {
         Transform NewUnit = Instantiate(Hedgehog.transform, position, Quaternion.identity, transform);
         Hedgehogs.Add(NewUnit);
     }
-    //Создание "второго этажа" из ежей
-    private void CreateHedgehogs()
+    private void CreateHedgehogs()  //Создание "второго этажа" из ежей
     {
         int number = Hedgehogs.Count;
         for (int i = 0; i < number; i++)
@@ -49,8 +45,7 @@ public class Player : MonoBehaviour
             CreateHedgehog(UpPosition);
         }
     }
-    //Левый край для привязки оси поворота
-    public Vector3 GetLeftCorner()
+    public Vector3 GetLeftCorner()  //Левый край для привязки оси поворота
     {
         Vector3 leftPos = Hedgehogs[0].position;
         for (int i = 1; i < (Hedgehogs.Count); i++)
@@ -59,8 +54,7 @@ public class Player : MonoBehaviour
                     leftPos = Hedgehogs[i].position;
         return leftPos;
     }
-    //Правый край для привязки оси поворота
-    public Vector3 GetRightCorner()
+    public Vector3 GetRightCorner() //Правый край для привязки оси поворот
     {
         Vector3 rightPos = Hedgehogs[0].position;
         for (int i = 1; i < (Hedgehogs.Count); i++)
@@ -69,8 +63,7 @@ public class Player : MonoBehaviour
                     rightPos = Hedgehogs[i].position;
         return rightPos;
     }
-    //Верхний край для привязки оси поворота
-    public Vector3 GetUpCorner()
+    public Vector3 GetUpCorner()    //Верхний край для привязки оси поворота
     {
         Vector3 upPos = Hedgehogs[0].position;
         for (int i = 1; i < (Hedgehogs.Count); i++)
@@ -79,8 +72,7 @@ public class Player : MonoBehaviour
                     upPos = Hedgehogs[i].position;
         return upPos;
     }
-    //Нижний край для привязки оси поворота
-    public Vector3 GetDownCorner()
+    public Vector3 GetDownCorner()  //Нижний край для привязки оси поворота
     {
         Vector3 downPos = Hedgehogs[0].position;
         for (int i = 1; i < (Hedgehogs.Count); i++)
@@ -89,17 +81,4 @@ public class Player : MonoBehaviour
                     downPos = Hedgehogs[i].position;
         return downPos;
     }
-
-/*    //Поворот группы ежей относительно оси X
-    public void RotateX(Vector3 AxisPosition, float Rotation)
-    {
-        for (int i = 0; i < Hedgehogs.Count; i++)
-            Hedgehogs[i].RotateAround(AxisPosition, Vector3.back, Rotation);
-    }
-    //Поворот группы ежей относительно оси Z
-    public void RotateZ(Vector3 AxisPosition, float Rotation)
-    {
-        for (int i = 0; i < Hedgehogs.Count; i++)
-            Hedgehogs[i].RotateAround(AxisPosition, Vector3.right, Rotation);
-    }*/
 }
