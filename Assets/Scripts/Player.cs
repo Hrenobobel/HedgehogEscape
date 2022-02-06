@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     //Управление включено
     public bool EnableControls;
 
+    public Game game;
+
     //Список из ежиков
     private List<Transform> Hedgehogs = new List<Transform>();
 
@@ -91,15 +93,11 @@ public class Player : MonoBehaviour
     }
     public void Win()
     {
-        Debug.Log("You Win");
-    }
-    public void Die()
-    {
-        Debug.Log("You Die");
+        game.OnPlayerWin();
     }
     public void LiveDown()
     {
-        Debug.Log("Live Down");
+        game.OnPlayerHurt();
     }
         
 }

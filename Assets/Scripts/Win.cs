@@ -8,8 +8,6 @@ public class Win : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))  //Игрок достиг финиша
         {
-            Debug.Log("win");
-            player.EnableControls = false;
             player.Win();
         }
             

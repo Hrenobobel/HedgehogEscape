@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-
     //Логика группы ежей
     public Player player;
 
@@ -42,5 +41,33 @@ public class Game : MonoBehaviour
         player.EnableControls = false;
         GameUI.SetActive(false);
         WinUI.SetActive(true);
+        LevelIndex++;
     }
+    public void OnPlayerHurt()
+    {
+        if (LivesNumber > 1)
+            LivesNumber--;
+        else
+            OnPlayerDie();
+    }
+    public int LevelIndex
+    {
+        get => PlayerPrefs.GetInt(LevelIndexKey, 0);
+        set
+        {
+            PlayerPrefs.SetInt(LevelIndexKey, value);
+            PlayerPrefs.Save();
+        }
+    }
+    private const string LevelIndexKey = "LevelIndex";
+    public int LivesNumber
+    {
+        get => PlayerPrefs.GetInt(LivesNumberKey, 3);
+        set
+        {
+            PlayerPrefs.SetInt(LivesNumberKey, value);
+            PlayerPrefs.Save();
+        }
+    }
+    private const string LivesNumberKey = "LivesNumber";
 }

@@ -158,6 +158,7 @@ MonoBehaviour:
   Step: 1
   Hedgehog: {fileID: 8591903399863579136, guid: dd24113c010eefa49b26ec91c592b865, type: 3}
   EnableControls: 0
+  game: {fileID: 528291215}
 --- !u!4 &75695405
 Transform:
   m_ObjectHideFlags: 0
@@ -191,6 +192,7 @@ MonoBehaviour:
   EnableControls: 0
   CollisionParticle: {fileID: 2259338215774699814, guid: a9090b8bb35e11c458be0eabe73d0568, type: 3}
   PlayerAudio: {fileID: 75695408}
+  EnemyAudio: {fileID: 8300000, guid: c8c2a993625ad1247a9cd4df8113f22e, type: 3}
   StepAudio: {fileID: 8300000, guid: d374d520763e2ff4ab8e3d978e7fbbf2, type: 3}
 --- !u!54 &75695407
 Rigidbody:
@@ -218,7 +220,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c8c2a993625ad1247a9cd4df8113f22e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: bf150bb31e920cd48a861654194d1ac2, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1720,6 +1722,7 @@ GameObject:
   - component: {fileID: 1045874161}
   - component: {fileID: 1045874163}
   - component: {fileID: 1045874162}
+  - component: {fileID: 1045874164}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -1788,6 +1791,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1045874160}
   m_CullTransparentMesh: 1
+--- !u!114 &1045874164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1045874160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29a7f401499d72049a2f31a94ce92ba7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: {fileID: 1045874162}
+  Game: {fileID: 528291215}
 --- !u!1 &1090063489
 GameObject:
   m_ObjectHideFlags: 0
