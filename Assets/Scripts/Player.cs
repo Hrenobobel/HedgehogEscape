@@ -81,4 +81,25 @@ public class Player : MonoBehaviour
                     downPos = Hedgehogs[i].position;
         return downPos;
     }
+    public Vector3 GetHedgehogsCenter() //Вычисляем центр группы как середина между противоположными элементами списка
+    {
+        float X = (Hedgehogs[0].transform.position.x + Hedgehogs[Hedgehogs.Count - 1].transform.position.x) / 2;
+        float Y = (Hedgehogs[0].transform.position.y + Hedgehogs[Hedgehogs.Count - 1].transform.position.y) / 2;
+        float Z = (Hedgehogs[0].transform.position.z + Hedgehogs[Hedgehogs.Count - 1].transform.position.z) / 2;
+        Vector3 Center = new Vector3(X, Y, Z);
+        return Center;
+    }
+    public void Win()
+    {
+        Debug.Log("You Win");
+    }
+    public void Die()
+    {
+        Debug.Log("You Die");
+    }
+    public void LiveDown()
+    {
+        Debug.Log("Live Down");
+    }
+        
 }

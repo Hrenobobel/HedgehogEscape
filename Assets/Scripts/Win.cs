@@ -10,6 +10,7 @@ public class Win : MonoBehaviour
         {
             Debug.Log("win");
             player.EnableControls = false;
+            player.Win();
         }
             
     }

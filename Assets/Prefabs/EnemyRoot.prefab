@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Amplitude: 0.1
-  Frequency: 2
-  Offset: 0
+  MinFrequency: 1
+  MaxFrequency: 3
 --- !u!1 &5552027918913171695
 GameObject:
   m_ObjectHideFlags: 0

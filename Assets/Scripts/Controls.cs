@@ -12,6 +12,12 @@ public class Controls : MonoBehaviour
     public float MoveSpeed;
     //Управление включено
     public bool EnableControls;
+    //Система частиц при столкновении с врагом или стеной
+    public GameObject CollisionParticle;
+    //Звук при столкновении
+    public AudioSource PlayerAudio;
+    //Звук шага
+    public AudioClip StepAudio;
 
     //Предыдущая позиция игрока
     private Vector3 LastPosition;
@@ -80,7 +86,7 @@ public class Controls : MonoBehaviour
     {
         LastPosition = player.transform.position;
         LastRotation = player.transform.rotation;
-        WallEnemyTrigger = false;            //Сбрасываем указатель столкновения со стеной
+        WallEnemyTrigger = false;       //Сбрасываем указатель столкновения со стеной
     }
     private void SetPlayerPosition()    //Установка объекта игрока в передыдущую позицию
     {
@@ -89,49 +95,47 @@ public class Controls : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)     
     {
-        if (other.gameObject.CompareTag("Wall"))    //при касании стены срабатывает возвращающий игрока на предыдущую позицию триггер
+        if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Enemy"))    //при касании стены срабатывает возвращающий игрока на предыдущую позицию триггер
         {
-            WallEnemyTrigger = true;         //Выход из функции плавного поворота
-            Debug.Log("Wall");
+            PlayerAudio.Play();
+            Quaternion Zero = new Quaternion(0, 0, 0, 0);
+            Instantiate(CollisionParticle, player.GetHedgehogsCenter(), Zero);              //Система частиц в центре группы ежей
+            WallEnemyTrigger = true;    //Выход из функции плавного поворота            
             SetPlayerPosition();        //Возвращем игрока в предыдущее положение
-        }
-        if (other.gameObject.CompareTag("Enemy"))   //при касании врага срабатывает возвращающий игрока на предыдущую позицию триггер
-        {
-            WallEnemyTrigger = true;         //Выход из функции плавного поворота
-            Debug.Log("Enemy");
-            SetPlayerPosition();        //Возвращем игрока в предыдущее положение
+            if (other.gameObject.CompareTag("Enemy"))
+                player.LiveDown();
         }
     }
-    public void МoveUp ()   //Позиция игрока поворачивается на 90 градусов вперёд по оси Z
+    public void МoveUp ()       //Позиция игрока поворачивается на 90 градусов вперёд по оси Z
     {
         Vector3 up = player.GetUpCorner();                          //Берем переднюю нижнюю ось группы ежей для поворота
         player.transform.RotateAround(up, Vector3.right, 90f);      //Поворот ежей вперёд
     }
-    public void МoveDown()  //Позиция игрока поворачивается на 90 градусов назад по оси Z
+    public void МoveDown()      //Позиция игрока поворачивается на 90 градусов назад по оси Z
     {
         Vector3 down = player.GetDownCorner();                      //Берем заднюю нижнюю ось группы ежей для поворота
         player.transform.RotateAround(down, Vector3.left, 90f);     //Поворот ежей назад
     }
-    public void МoveRight() //Позиция игрока поворачивается на 90 градусов вправо по оси X
+    public void МoveRight()     //Позиция игрока поворачивается на 90 градусов вправо по оси X
     {
         Vector3 right = player.GetRightCorner();                    //Берем правую нижнюю ось группы ежей для поворота
         player.transform.RotateAround(right, Vector3.back, 90f);    //Поворот ежей вправо
     }
-    public void МoveLeft()  //Позиция игрока поворачивается на 90 градусов влево по оси X
+    public void МoveLeft()      //Позиция игрока поворачивается на 90 градусов влево по оси X
     {
         Vector3 left = player.GetLeftCorner();                      //Берем левую нижнюю ось группы ежей для поворота
         player.transform.RotateAround(left, Vector3.forward, 90f);  //Поворот ежей влево
     }
     IEnumerator RotateUp()      //Реализация плавного поворота игрока вперёд
     {
-        SavePlayerPosition();               //Сохраняем стартовое положение игрока
-        Vector3 up = player.GetUpCorner();  //Берем переднюю нижнюю ось группы ежей для поворота
-        float rotation = 0f;                //Счетчик для контроля "доворота до 90 градусов"        
+        SavePlayerPosition();                       //Сохраняем стартовое положение игрока
+        Vector3 up = player.GetUpCorner();          //Берем переднюю нижнюю ось группы ежей для поворота
+        float rotation = 0f;                        //Счетчик для контроля "доворота до 90 градусов"        
         while (true) 
         {
-            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            if (WallEnemyTrigger)                   //Если столкнулись со стеной, выходим
             {
-                StopCoroutine();
+                coroutine = null;
                 yield break;
             }
             //Вычисляем угол поворота
@@ -139,11 +143,10 @@ public class Controls : MonoBehaviour
             player.transform.RotateAround(up, Vector3.right, angle);
             rotation += angle;
 
-            if (rotation > 90f - MoveSpeed) //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
+            if (rotation > 90f - MoveSpeed)         //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
             {
-                SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
-                МoveUp();                   // и проворачиваем точно на 90 градусов
-                StopCoroutine();
+                RotationEnd();                      //Для установки игрока в точное положение возвращаем его в предыдущее состояние
+                МoveUp();                           // поворачиваем ровно на 90 градусов
                 yield break;
             }
             yield return null;
@@ -151,41 +154,40 @@ public class Controls : MonoBehaviour
     }
     IEnumerator RotateDown()    //Реализация плавного поворота игрока назад
     {
-        SavePlayerPosition();                   //Сохраняем стартовое положение игрока
-        Vector3 down = player.GetDownCorner();  //Берем заднюю нижнюю ось группы ежей для поворота
-        float rotation = 0f;                    //Счетчик для контроля "доворота до 90 градусов"        
+        SavePlayerPosition();                       //Сохраняем стартовое положение игрока
+        Vector3 down = player.GetDownCorner();      //Берем заднюю нижнюю ось группы ежей для поворота
+        float rotation = 0f;                        //Счетчик для контроля "доворота до 90 градусов"        
         while (true)
         {
-            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            if (WallEnemyTrigger)                   //Если столкнулись со стеной, выходим
             {
-                StopCoroutine();
+                coroutine = null;
                 yield break;
             }
-
+            //Вычисляем угол поворота
             float angle = Mathf.LerpAngle(0f, 90f, MoveSpeed * Time.deltaTime);
             player.transform.RotateAround(down, Vector3.left, angle);
             rotation += angle;
-            //Вычисляем угол поворота
-            if (rotation > 90f - MoveSpeed) //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
+            
+            if (rotation > 90f - MoveSpeed)         //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
             {
-                SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
-                МoveDown();                 // и проворачиваем точно на 90 градусов
-                StopCoroutine();
+                RotationEnd();                      //Для установки игрока в точное положение возвращаем его в предыдущее состояние
+                МoveDown();                         // и поворачиваем ровно на 90 градусов
                 yield break;
             }
             yield return null;
         }
     }
-    public IEnumerator RotateRight()   //Реализация плавного поворота игрока вправо
+    IEnumerator RotateRight()   //Реализация плавного поворота игрока вправо
     {
         SavePlayerPosition();                       //Сохраняем стартовое положение игрока
         Vector3 right = player.GetRightCorner();    //Берем правую нижнюю ось группы ежей для поворота
         float rotation = 0f;                        //Счетчик для контроля "доворота до 90 градусов"        
         while (true)
         {
-            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            if (WallEnemyTrigger)                   //Если столкнулись со стеной, выходим
             {
-                StopCoroutine();
+                coroutine = null;
                 yield break;
             }
             //Вычисляем угол поворота
@@ -193,11 +195,10 @@ public class Controls : MonoBehaviour
             player.transform.RotateAround(right, Vector3.back, angle);
             rotation += angle;
 
-            if (rotation > 90f - MoveSpeed) //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
+            if (rotation > 90f - MoveSpeed)         //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
             {
-                SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
-                МoveRight();                // и проворачиваем точно на 90 градусов
-                StopCoroutine();
+                RotationEnd();                      //Для установки игрока в точное положение возвращаем его в предыдущее состояние
+                МoveRight();                        // и поворачиваем ровно на 90 градусов
                 yield break;
             }
             yield return null;
@@ -205,14 +206,14 @@ public class Controls : MonoBehaviour
     }
     IEnumerator RotateLeft()    //Реализация плавного поворота игрока влево
     {
-        SavePlayerPosition();                   //Сохраняем стартовое положение игрока
-        Vector3 left = player.GetLeftCorner();  //Берем левую нижнюю ось группы ежей для поворота
-        float rotation = 0f;                    //Счетчик для контроля "доворота до 90 градусов"        
+        SavePlayerPosition();                       //Сохраняем стартовое положение игрока
+        Vector3 left = player.GetLeftCorner();      //Берем левую нижнюю ось группы ежей для поворота
+        float rotation = 0f;                        //Счетчик для контроля "доворота до 90 градусов"        
         while (true)
         {
-            if (WallEnemyTrigger)    //Если столкнулись со стеной, выходим
+            if (WallEnemyTrigger)                   //Если столкнулись со стеной, выходим
             {
-                StopCoroutine();
+                coroutine = null; ;
                 yield break;   
             }
             //Вычисляем угол поворота
@@ -220,18 +221,19 @@ public class Controls : MonoBehaviour
             player.transform.RotateAround(left, Vector3.forward, angle);
             rotation += angle;
 
-            if (rotation > 90f - MoveSpeed) //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
-            {                
-                SetPlayerPosition();        //Для установки игрока в точное положение возвращаем его в предыдущее состояние
-                МoveLeft();                 // и проворачиваем точно на 90 градусов
-                StopCoroutine();
+            if (rotation > 90f - MoveSpeed)         //Вращаем игрока пока угол поворота не приблизится к 90 градусам на угол менее шага, равного скорости
+            {
+                RotationEnd();                      //Для установки игрока в точное положение возвращаем его в предыдущее состояние
+                МoveLeft();                         // и поворачиваем ровно на 90 градусов
                 yield break;
             }
             yield return null;
         }
     }
-    private void StopCoroutine()
+    private void RotationEnd()  //Действия перед выходом из coroutine
     {
+        PlayerAudio.PlayOneShot(StepAudio, 1f);
+        SetPlayerPosition();
         coroutine = null;
     }
 }

@@ -8,24 +8,24 @@ public class Enemy : MonoBehaviour
     public float MinFrequency = 1;
     public float MaxFrequency = 3;
     //Данные для функции Sin
-    private float Offset = 0;
+    private float offset = 0;
     private float t = 0;
     private float frequency;
     private float phase;
-    private Vector3 StartPosition;
+    private Vector3 startPosition;
 
     void Start()
     {
-        StartPosition = transform.position;
+        startPosition = transform.position;
         phase = Random.Range(0f, 1f);
         frequency = Random.Range(MinFrequency, MaxFrequency);
     }
     void Update()
     {
         t += Time.deltaTime;
-        Offset = Amplitude * Mathf.Sin(t * frequency + phase);
+        offset = Amplitude * Mathf.Sin(t * frequency + phase);
 
-        transform.position = StartPosition + new Vector3(0f, Offset, 0f);
+        transform.position = startPosition + new Vector3(0f, offset, 0f);
         transform.Rotate(new Vector3(0f, 0.1f, 0f));
     }
 }

@@ -27,7 +27,7 @@ public class Generator : MonoBehaviour
     //Шаг сетки игрового поля
     private float step;
 
-    private void Awake()
+    public void Level_0()
     {
         offsetX = (LinesNumber - 1) / 2;    //смещение координат (для нечетного количества строк)
         offsetZ = (ColumnsNumber - 1) / 2;  //смещение координат (для нечетного количества столбцов)
@@ -39,8 +39,6 @@ public class Generator : MonoBehaviour
         CreateHoles();                                          //Генерация ячеек игрового поля
         CreateWalls();                                          //Генерация стен
         CreateEnemies();                                        //Генерация врагов
-
-        player.EnableControls = true;       //Управление включено
     }    
     private void CreateHoles()                      //Создаём поле из префабов ячеек и площадку на выходе
     {
@@ -73,7 +71,7 @@ public class Generator : MonoBehaviour
         Transform ThirdWall = CreateWall(Third);
         ThirdWall.localScale = new Vector3(1f, 2f, (LinesNumber + 1) * step);
         
-        Vector3 Fourth = new Vector3((offsetX + 1) * step, Ypos, step / 2 + 0.025f);             //Правая верхняя граница
+        Vector3 Fourth = new Vector3((offsetX + 1) * step, Ypos, step / 2 + 0.025f);            //Правая верхняя граница
         Transform FourthWall = CreateWall(Fourth);
         FourthWall.localScale = new Vector3(1f, 2f, 3.475f * step);
         
@@ -83,7 +81,7 @@ public class Generator : MonoBehaviour
         
         Vector3 Вrick = new Vector3((offsetX + 1) * step, Ypos / 2, - 1.5f * step - 0.025f);    //Барьер
         Transform ВrickWall = CreateWall(Вrick);
-        ВrickWall.localScale = new Vector3(1f, 0.95f, 2.05f * step);
+        ВrickWall.localScale = new Vector3(1f, 1f, 2.05f * step);
     }
     private Transform CreateWall(Vector3 pos)       //Создание объекта стен
     {
