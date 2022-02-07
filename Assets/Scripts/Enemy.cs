@@ -7,7 +7,8 @@ public class Enemy : MonoBehaviour
     //Частота движений врагов
     public float MinFrequency = 1;
     public float MaxFrequency = 3;
-    //Данные для функции Sin
+
+    //Параметры функции Sin
     private float offset = 0;
     private float t = 0;
     private float frequency;

@@ -8,53 +8,72 @@ public class Generator : MonoBehaviour
     public int LinesNumber;
     //Количество ячеек на игровом поле по горизонтали
     public int ColumnsNumber;
-    //Объект ячейки игрового поля
+    //Префаб ячейки игрового поля
     public GameObject Hole;
-    //Объект ячейки выхода
-    public GameObject FinishHole;
-    //Объект стены
+    //Префаб стены
     public GameObject Wall;
     //Префаб врага
     public GameObject Enemy;
+    //Стартовое положение игрока
+    public int[] StartPlayer_X;
+    public int[] StartPlayer_Z;
+    public float[] StartRotation;
+    //Положение каждого врага на сетке
+    public int[] Enemy1_X;
+    public int[] Enemy1_Z;
+    public int[] Enemy2_X;
+    public int[] Enemy2_Z;
+    public int[] Enemy3_X;
+    public int[] Enemy3_Z;
+    public int[] Enemy4_X;
+    public int[] Enemy4_Z;
+    //Подсказка
+    public string[] Hint;
 
     //смещение координат
     private int offsetX;
     private int offsetZ;
-    //позиция Y у объекта стены
+    //позиция Y объекта стены
     private float Ypos;
     //Шаг сетки игрового поля
     private float step;
 
     private void Awake()
     {
-        offsetX = (LinesNumber - 1) / 2;    //смещение координат (для нечетного количества строк)
-        offsetZ = (ColumnsNumber - 1) / 2;  //смещение координат (для нечетного количества столбцов)
+        offsetX = (LinesNumber - 1) / 2;            //смещение координат (для нечетного количества строк)
+        offsetZ = (ColumnsNumber - 1) / 2;          //смещение координат (для нечетного количества столбцов)
         Ypos = Wall.transform.position.y;
         step = player.Step;
-        CreateWalls();                                          //Генерация стен
-        CreateHoles();                                          //Генерация ячеек игрового поля
+        CreateWalls();                              //Генерация стен
+        CreateHoles();                              //Генерация ячеек игрового поля
     }
-    public void LevelGenerator(Transform StartPosition, float StartRotation)
+    public void LevelGenerator(int LevelIndex)
     {
-        player.AddHedgehogs(StartPosition);                     //Создание группы из ежей
-        player.RotateHedgehogs(StartPosition, StartRotation);   //Вращение группы ежей относительно оси, проходящей через "голову"
-        CreateEnemies();                                        //Генерация врагов
+        Vector3 StartPos = GetPos(StartPlayer_X[LevelIndex], StartPlayer_Z[LevelIndex]) + new Vector3(0f, 0.5f, 0f);
+        player.AddHedgehogs(StartPos);              //Создание группы из ежей
+        player.RotateHedgehogs(StartPos, StartRotation[LevelIndex]);    //Вращение группы ежей относительно оси, проходящей через "голову"
+        CreateEnemies(LevelIndex);                  //Генерация врагов
     }    
     private void CreateHoles()                      //Создаём поле из префабов ячеек и площадку на выходе
     {
-        for (int i = 0; i < LinesNumber; i++)
-            for (int n = 0; n < ColumnsNumber; n++)
+        for (int i = 1; i <= LinesNumber; i++)
+            for (int n = 1; n <= ColumnsNumber; n++)
                 CreateObject(Hole, i, n);
-        CreateObject(FinishHole, LinesNumber + 1, offsetZ);
-        CreateObject(FinishHole, LinesNumber + 2, offsetZ);
-        CreateObject(FinishHole, LinesNumber + 1, offsetZ - 1);
-        CreateObject(FinishHole, LinesNumber + 2, offsetZ - 1);
+        CreateObject(Hole, LinesNumber + 2, offsetZ + 1);
+        CreateObject(Hole, LinesNumber + 3, offsetZ + 1);
+        CreateObject(Hole, LinesNumber + 2, offsetZ);
+        CreateObject(Hole, LinesNumber + 3, offsetZ);
     }    
-    private void CreateObject(GameObject Object, int line, int column)   //Генерация ячейки
+    private void CreateObject(GameObject Object, int line, int column)  //Генерация ячейки
     {
-        Vector3 position = new Vector3((line - offsetX) * step, Ypos, (column - offsetZ) * step);
+        Vector3 position = GetPos(line, column);
         Instantiate(Object.transform, position, Quaternion.identity, transform);
-    }    
+    }
+    private Vector3 GetPos(int line, int column)    //Вычисляем позицию по номеру строки и столбца
+    {
+        Vector3 position = new Vector3((line - offsetX - 1) * step, Ypos, (column - offsetZ - 1) * step);
+        return position;
+    }
     private void CreateWalls()                      //Генератор стен
     {        
         Vector3 First = new Vector3(-(offsetX + 1) * step, Ypos, (offsetZ + 1) * step);         //Верхняя граница
@@ -88,11 +107,11 @@ public class Generator : MonoBehaviour
         Transform brick = Instantiate(Wall.transform, pos, Quaternion.identity, transform);
         return brick;
     }
-    private void CreateEnemies()
+    private void CreateEnemies(int LevelInd)        //Генерация врагов
     {
-        CreateObject(Enemy, 1, 2);
-        CreateObject(Enemy, 4, 2);
-        CreateObject(Enemy, 2, 4);
-        CreateObject(Enemy, 4, 5);
+        CreateObject(Enemy, Enemy1_X[LevelInd], Enemy1_Z[LevelInd]);
+        CreateObject(Enemy, Enemy2_X[LevelInd], Enemy2_Z[LevelInd]);
+        CreateObject(Enemy, Enemy3_X[LevelInd], Enemy3_Z[LevelInd]);
+        CreateObject(Enemy, Enemy4_X[LevelInd], Enemy4_Z[LevelInd]);
     }
 }
