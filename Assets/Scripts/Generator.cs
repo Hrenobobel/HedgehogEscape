@@ -2,10 +2,6 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
-    //Положение "головы" группы ежей
-    public Transform StartTransform;
-    //Начальный поворот группы ежей
-    public float StartRotation;
     //Логика группы ежей
     public Player player;
     //Количество ячеек на игровом поле по горизонтали
@@ -14,6 +10,8 @@ public class Generator : MonoBehaviour
     public int ColumnsNumber;
     //Объект ячейки игрового поля
     public GameObject Hole;
+    //Объект ячейки выхода
+    public GameObject FinishHole;
     //Объект стены
     public GameObject Wall;
     //Префаб врага
@@ -33,24 +31,24 @@ public class Generator : MonoBehaviour
         offsetZ = (ColumnsNumber - 1) / 2;  //смещение координат (для нечетного количества столбцов)
         Ypos = Wall.transform.position.y;
         step = player.Step;
-
-        player.AddHedgehogs(StartTransform);                    //Создание группы из ежей
-        player.RotateHedgehogs(StartTransform, StartRotation);  //Вращение группы ежей относительно оси, проходящей через "голову"
-        CreateHoles();                                          //Генерация ячеек игрового поля
         CreateWalls();                                          //Генерация стен
+        CreateHoles();                                          //Генерация ячеек игрового поля
+    }
+    public void LevelGenerator(Transform StartPosition, float StartRotation)
+    {
+        player.AddHedgehogs(StartPosition);                     //Создание группы из ежей
+        player.RotateHedgehogs(StartPosition, StartRotation);   //Вращение группы ежей относительно оси, проходящей через "голову"
         CreateEnemies();                                        //Генерация врагов
-
-        player.EnableControls = true;       //Управление включено
     }    
     private void CreateHoles()                      //Создаём поле из префабов ячеек и площадку на выходе
     {
         for (int i = 0; i < LinesNumber; i++)
             for (int n = 0; n < ColumnsNumber; n++)
                 CreateObject(Hole, i, n);
-        CreateObject(Hole, LinesNumber + 1, offsetZ);
-        CreateObject(Hole, LinesNumber + 2, offsetZ);
-        CreateObject(Hole, LinesNumber + 1, offsetZ - 1);
-        CreateObject(Hole, LinesNumber + 2, offsetZ - 1);
+        CreateObject(FinishHole, LinesNumber + 1, offsetZ);
+        CreateObject(FinishHole, LinesNumber + 2, offsetZ);
+        CreateObject(FinishHole, LinesNumber + 1, offsetZ - 1);
+        CreateObject(FinishHole, LinesNumber + 2, offsetZ - 1);
     }    
     private void CreateObject(GameObject Object, int line, int column)   //Генерация ячейки
     {
@@ -73,7 +71,7 @@ public class Generator : MonoBehaviour
         Transform ThirdWall = CreateWall(Third);
         ThirdWall.localScale = new Vector3(1f, 2f, (LinesNumber + 1) * step);
         
-        Vector3 Fourth = new Vector3((offsetX + 1) * step, Ypos, step / 2 + 0.025f);             //Правая верхняя граница
+        Vector3 Fourth = new Vector3((offsetX + 1) * step, Ypos, step / 2 + 0.025f);            //Правая верхняя граница
         Transform FourthWall = CreateWall(Fourth);
         FourthWall.localScale = new Vector3(1f, 2f, 3.475f * step);
         
@@ -83,7 +81,7 @@ public class Generator : MonoBehaviour
         
         Vector3 Вrick = new Vector3((offsetX + 1) * step, Ypos / 2, - 1.5f * step - 0.025f);    //Барьер
         Transform ВrickWall = CreateWall(Вrick);
-        ВrickWall.localScale = new Vector3(1f, 0.95f, 2.05f * step);
+        ВrickWall.localScale = new Vector3(1f, 1f, 2.05f * step);
     }
     private Transform CreateWall(Vector3 pos)       //Создание объекта стен
     {
