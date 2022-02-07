@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public GameObject Hedgehog;
     //Управление включено
     public bool EnableControls;
-
+    //Логика реакции на действия игрока
     public Game game;
 
     //Список из ежиков
@@ -91,13 +91,12 @@ public class Player : MonoBehaviour
         Vector3 Center = new Vector3(X, Y, Z);
         return Center;
     }
-    public void Win()
+    public void Win()       //Игрок достиг финиша
     {
         game.OnPlayerWin();
     }
-    public void LiveDown()
+    public void LiveDown()  //Игрок коснулся врага
     {
         game.OnPlayerHurt();
-    }
-        
+    }        
 }

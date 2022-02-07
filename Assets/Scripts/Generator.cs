@@ -2,10 +2,6 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
-    //Положение "головы" группы ежей
-    public Transform StartTransform;
-    //Начальный поворот группы ежей
-    public float StartRotation;
     //Логика группы ежей
     public Player player;
     //Количество ячеек на игровом поле по горизонтали
@@ -14,6 +10,8 @@ public class Generator : MonoBehaviour
     public int ColumnsNumber;
     //Объект ячейки игрового поля
     public GameObject Hole;
+    //Объект ячейки выхода
+    public GameObject FinishHole;
     //Объект стены
     public GameObject Wall;
     //Префаб врага
@@ -27,17 +25,19 @@ public class Generator : MonoBehaviour
     //Шаг сетки игрового поля
     private float step;
 
-    public void Level_0()
+    private void Awake()
     {
         offsetX = (LinesNumber - 1) / 2;    //смещение координат (для нечетного количества строк)
         offsetZ = (ColumnsNumber - 1) / 2;  //смещение координат (для нечетного количества столбцов)
         Ypos = Wall.transform.position.y;
         step = player.Step;
-
-        player.AddHedgehogs(StartTransform);                    //Создание группы из ежей
-        player.RotateHedgehogs(StartTransform, StartRotation);  //Вращение группы ежей относительно оси, проходящей через "голову"
-        CreateHoles();                                          //Генерация ячеек игрового поля
         CreateWalls();                                          //Генерация стен
+        CreateHoles();                                          //Генерация ячеек игрового поля
+    }
+    public void LevelGenerator(Transform StartPosition, float StartRotation)
+    {
+        player.AddHedgehogs(StartPosition);                     //Создание группы из ежей
+        player.RotateHedgehogs(StartPosition, StartRotation);   //Вращение группы ежей относительно оси, проходящей через "голову"
         CreateEnemies();                                        //Генерация врагов
     }    
     private void CreateHoles()                      //Создаём поле из префабов ячеек и площадку на выходе
@@ -45,10 +45,10 @@ public class Generator : MonoBehaviour
         for (int i = 0; i < LinesNumber; i++)
             for (int n = 0; n < ColumnsNumber; n++)
                 CreateObject(Hole, i, n);
-        CreateObject(Hole, LinesNumber + 1, offsetZ);
-        CreateObject(Hole, LinesNumber + 2, offsetZ);
-        CreateObject(Hole, LinesNumber + 1, offsetZ - 1);
-        CreateObject(Hole, LinesNumber + 2, offsetZ - 1);
+        CreateObject(FinishHole, LinesNumber + 1, offsetZ);
+        CreateObject(FinishHole, LinesNumber + 2, offsetZ);
+        CreateObject(FinishHole, LinesNumber + 1, offsetZ - 1);
+        CreateObject(FinishHole, LinesNumber + 2, offsetZ - 1);
     }    
     private void CreateObject(GameObject Object, int line, int column)   //Генерация ячейки
     {

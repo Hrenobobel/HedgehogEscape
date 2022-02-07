@@ -14,12 +14,12 @@ public class Controls : MonoBehaviour
     public bool EnableControls;
     //Система частиц при столкновении с врагом или стеной
     public GameObject CollisionParticle;
-    //Звук при столкновении со стеной
+    //Звуки
     public AudioSource PlayerAudio;
-    //Звук при столкновении с врагом
     public AudioClip EnemyAudio;
-    //Звук шага
     public AudioClip StepAudio;
+    public AudioClip WinAudio;
+    public AudioClip LoseAudio;
 
     //Предыдущая позиция игрока
     private Vector3 LastPosition;
@@ -105,9 +105,9 @@ public class Controls : MonoBehaviour
             WallEnemyTrigger = true;    //Выход из функции плавного поворота            
             SetPlayerPosition();        //Возвращем игрока в предыдущее положение
         }
-        if (other.gameObject.CompareTag("Enemy"))   //при касании стены срабатывает возвращающий игрока на предыдущую позицию триггер
+        if (other.gameObject.CompareTag("Enemy"))   //при касании врага срабатывает возвращающий игрока на предыдущую позицию триггер
         {
-            PlayerAudio.PlayOneShot(EnemyAudio, 1f);
+            PlayerAudio.PlayOneShot(EnemyAudio, 0.75f);
             Quaternion Zero = new Quaternion(0, 0, 0, 0);
             Instantiate(CollisionParticle, player.GetHedgehogsCenter(), Zero);              //Система частиц в центре группы ежей
             WallEnemyTrigger = true;    //Выход из функции плавного поворота            
@@ -241,7 +241,7 @@ public class Controls : MonoBehaviour
     }
     private void RotationEnd()  //Действия перед выходом из coroutine
     {
-        PlayerAudio.PlayOneShot(StepAudio, 1f);
+        PlayerAudio.PlayOneShot(StepAudio, 0.5f);
         SetPlayerPosition();
         coroutine = null;
     }
